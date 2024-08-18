@@ -27,7 +27,9 @@ jobs:
     - name: Upload GitHub Pages artifact
       uses: actions/upload-pages-artifact@v3.0.1
       with:
+        name: vue-wordle
         path: ./dist
+        overwrite: true
 
   # Deploy job
   deploy:
