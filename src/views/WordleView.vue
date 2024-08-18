@@ -131,7 +131,6 @@ onMounted(() => {
         :tiles="tiles[i]"
         :key="i"
       ></GuessRow>
-      <div>{{ solution }}</div>
       <div v-if="solved">Nice wordling!</div>
       <div v-if="failed">The solution was {{ solution }}</div>
       <div v-if="failed">Better luck next time!</div>
