@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import type { Highlight } from "@/views/WordleView.vue";
+import type { Tile } from "@/views/WordleView.vue";
 import { computed } from "vue";
 
 const props = defineProps<{
-  highlight: Highlight;
+  tile: Tile;
 }>();
 
-const isGreen = computed(() => props.highlight === "green");
-const isYellow = computed(() => props.highlight === "yellow");
-const isGray = computed(() => props.highlight === "gray");
+const isGreen = computed(() => props.tile.color === "green");
+const isYellow = computed(() => props.tile.color === "yellow");
+const isGray = computed(() => props.tile.color === "gray");
 </script>
 
 <template>
@@ -28,6 +28,7 @@ const isGray = computed(() => props.highlight === "gray");
   align-items: center;
   font-weight: 600;
   color: #000;
+  background-color: white;
   &.green {
     border-color: green;
     background-color: rgb(198, 242, 198);

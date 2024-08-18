@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from "vue-router";
+import { RouterView } from "vue-router";
 import TopHeader from "./components/TopHeader.vue";
 </script>
 
@@ -15,12 +15,6 @@ import TopHeader from "./components/TopHeader.vue";
 
     <div class="wrapper">
       <TopHeader msg="Wordle Clone in Vue" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-        <RouterLink to="/wordle">Wordle</RouterLink>
-      </nav>
     </div>
   </header>
 
