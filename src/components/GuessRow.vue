@@ -1,21 +1,20 @@
 <script setup lang="ts">
 import LetterTile from "./LetterTile.vue";
 import { computed } from "vue";
-import type { Highlight } from "@/views/WordleView.vue";
+import type { Tile } from "@/views/WordleView.vue";
 
 const props = defineProps<{
   guess: string;
-  highlights: Highlight[];
+  tiles: Tile[];
 }>();
 
-const tiles = [0, 1, 2, 3, 4];
 const letters = computed(() => [...props.guess.toUpperCase()]);
 </script>
 
 <template>
   <div class="guess-row">
-    <LetterTile v-for="tile in tiles" :key="tile" :highlight="highlights[tile]">
-      {{ letters[tile] }}
+    <LetterTile v-for="(tile, index) in props.tiles" :key="index" :tile="tile">
+      {{ letters[index] }}
     </LetterTile>
   </div>
 </template>

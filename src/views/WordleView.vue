@@ -1,61 +1,69 @@
 <script setup lang="ts">
 import GuessRow from "@/components/GuessRow.vue";
-import { allowed, words } from "@/data/words";
+import { words } from "@/data/words";
+import { allowed } from "@/data/allowed";
 import { ref, onMounted } from "vue";
-export type Highlight = "green" | "yellow" | "gray" | "none";
+export type Color = "green" | "yellow" | "gray" | "none";
 
-// const apiUrlAllWords = "https://random-word-api.herokuapp.com/all";
-// const apiUrlRandomWord = "https://random-word-api.herokuapp.com/word?length=5";
-// const loading = ref(false);
+export interface Tile {
+  color: Color;
+  letter: string;
+}
 
 let solution = words[Math.floor(Math.random() * words.length - 1)];
 let currentGuessWordIndex = 0;
 const guesses = ref(Array<string>(6).fill(""));
 const solved = ref(false);
 const failed = ref(false);
-const highlights = ref(
-  Array.from({ length: 6 }, () => Array<Highlight>(5).fill("none"))
+const tiles = ref(
+  Array.from({ length: 6 }, () =>
+    Array<Tile>(5).fill({ color: "none", letter: "" })
+  )
 );
 
-// function setCheckWordList() {
-//   loading.value = true;
-//   fetch(apiUrlAllWords)
-//     .then((response) => {
-//       if (!response.ok) {
-//         throw new Error(`HTTP error! Status: ${response.status}`);
-//       }
-
-//       return response.json();
-//     })
-//     .then((response: string[]) => {
-//       loading.value = false;
-//       checkWordList = response.filter((w) => w.length === 5);
-//     });
-// }
-
-// function setSolution() {
-//   fetch(apiUrlRandomWord)
-//     .then((response) => {
-//       if (!response.ok) {
-//         throw new Error(`HTTP error! Status: ${response.status}`);
-//       }
-
-//       return response.json();
-//     })
-//     .then((response: string[]) => {
-//       loading.value = false;
-//       solution = response[0];
-//     });
-// }
-
-function getHighlightStatus(letter: string, index: number): Highlight {
-  let highlight: Highlight = "gray";
-  if (letter === solution.charAt(index)) {
-    highlight = "green";
-  } else if ([...solution].some((l) => l === letter)) {
-    highlight = "yellow";
+function mapFalseYellowToGray(
+  tile: Tile,
+  index: number,
+  currGuess: string,
+  tiles: Tile[]
+): Tile {
+  if (tile.color === "yellow") {
+    const letter = currGuess.charAt(index);
+    const solnCount = solution.split(letter).length - 1;
+    const greenCount = tiles.filter(
+      (t) => t.color === "green" && t.letter === letter
+    ).length;
+    const yellowCount = tiles.filter(
+      (t) => t.color === "yellow" && t.letter === letter
+    ).length;
+    return {
+      color: yellowCount > solnCount - greenCount ? "gray" : "yellow",
+      letter: tile.letter,
+    };
+  } else {
+    return tile;
   }
-  return highlight;
+}
+
+function getColoredTile(letter: string, index: number): Tile {
+  let tile: Tile = { color: "gray", letter };
+  if (letter === solution.charAt(index)) {
+    tile.color = "green";
+  } else if (solution.includes(letter)) {
+    tile.color = "yellow";
+  }
+  return tile;
+}
+
+function getFixedTiles(tiles: Tile[], currGuess: string): Tile[] {
+  return tiles.reduce(
+    (accTiles, currTile, index) => [
+      ...accTiles.slice(0, index),
+      mapFalseYellowToGray(currTile, index, currGuess, accTiles),
+      ...accTiles.slice(index + 1),
+    ],
+    tiles
+  );
 }
 
 function handleKeyDown(event: KeyboardEvent) {
@@ -63,33 +71,37 @@ function handleKeyDown(event: KeyboardEvent) {
     return;
   }
 
-  let currWord = guesses.value[currentGuessWordIndex];
+  let currGuess = guesses.value[currentGuessWordIndex];
   let newWord = "";
 
-  if (event.key === "Backspace" && currWord.length > 0) {
-    newWord = currWord.substring(0, currWord.length - 1);
+  if (event.key === "Backspace" && currGuess.length > 0) {
+    newWord = currGuess.substring(0, currGuess.length - 1);
     guesses.value[currentGuessWordIndex] = newWord;
     return;
   }
 
-  if (event.key === "Enter" && currWord.length === 5) {
-    if (!allowed.has(currWord)) {
+  if (event.key === "Enter" && currGuess.length === 5) {
+    if (!allowed.has(currGuess)) {
       alert("Not a valid word");
       return;
     }
-    [...currWord].forEach(
-      (l, i) =>
-        (highlights.value[currentGuessWordIndex][i] = getHighlightStatus(l, i))
+    tiles.value[currentGuessWordIndex] = getFixedTiles(
+      [...currGuess].map((l, i) => getColoredTile(l, i)),
+      currGuess
     );
-    solved.value = currWord === solution;
-    !solved.value && currentGuessWordIndex < 5
-      ? currentGuessWordIndex++
-      : (failed.value = true);
+    solved.value = currGuess === solution;
+    if (!solved.value) {
+      if (currentGuessWordIndex === 5) {
+        failed.value = true;
+      } else {
+        currentGuessWordIndex++;
+      }
+    }
     return;
   }
 
-  if (/^[a-z]$/.test(event.key) && currWord.length <= 4) {
-    newWord = currWord + event.key;
+  if (/^[a-z]$/.test(event.key) && currGuess.length <= 4) {
+    newWord = currGuess + event.key;
     guesses.value[currentGuessWordIndex] = newWord;
   }
 }
@@ -100,8 +112,8 @@ function reset() {
   solved.value = false;
   failed.value = false;
   currentGuessWordIndex = 0;
-  highlights.value = Array.from({ length: 6 }, () =>
-    Array<Highlight>(5).fill("none")
+  tiles.value = Array.from({ length: 6 }, () =>
+    Array<Tile>(5).fill({ color: "none", letter: "" })
   );
 }
 
@@ -116,13 +128,13 @@ onMounted(() => {
       <GuessRow
         v-for="(guess, i) in guesses"
         :guess="guess"
-        :highlights="highlights[i]"
+        :tiles="tiles[i]"
         :key="i"
       ></GuessRow>
-      <!-- <div v-if="loading">Loading...</div> -->
+      <div>{{ solution }}</div>
       <div v-if="solved">Nice wordling!</div>
-      <div v-if="failed">Better luck next time!</div>
       <div v-if="failed">The solution was {{ solution }}</div>
+      <div v-if="failed">Better luck next time!</div>
       <button v-if="solved || failed" @click="reset">Reset</button>
     </div>
   </div>
