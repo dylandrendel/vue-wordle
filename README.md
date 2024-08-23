@@ -1,4 +1,4 @@
-# Wordle Clone Built in Vuew
+# Wordle Clone Built in Vue
 
 Actually follows the rules with highlighting yellows correctly.
 
