@@ -55,15 +55,19 @@ function getColoredTile(letter: string, index: number): Tile {
   return tile;
 }
 
+/**
+ * Fixes false yellows in an array of colored tiles.
+ * @description Mutate each tile in place so that the tiles array is updated for each step of the iteration.
+ * A normal map function does not work because we need to track changes in the array as we iterate through.
+ * @param tiles
+ * @param currGuess
+ * @returns the fixed tiles array
+ */
 function getFixedTiles(tiles: Tile[], currGuess: string): Tile[] {
-  return tiles.reduce(
-    (accTiles, currTile, index) => [
-      ...accTiles.slice(0, index),
-      mapFalseYellowToGray(currTile, index, currGuess, accTiles),
-      ...accTiles.slice(index + 1),
-    ],
-    tiles
-  );
+  for (const [index, tile] of tiles.entries()) {
+    tiles[index] = mapFalseYellowToGray(tile, index, currGuess, tiles);
+  }
+  return tiles;
 }
 
 function handleKeyDown(event: KeyboardEvent) {
