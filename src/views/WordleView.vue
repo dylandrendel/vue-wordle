@@ -1,14 +1,53 @@
-<script setup lang="ts">
-import GuessRow from "@/components/GuessRow.vue";
-import { words } from "@/data/words";
-import { allowed } from "@/data/allowed";
-import { ref, onMounted } from "vue";
+<script lang="ts">
 export type Color = "green" | "yellow" | "gray" | "none";
 
 export interface Tile {
   color: Color;
   letter: string;
 }
+
+export function createTile(
+  solution: string,
+  index: number,
+  currGuess: string,
+  tiles: Tile[]
+): Tile {
+  const letter = currGuess.charAt(index);
+  if (letter === solution.charAt(index)) {
+    return { color: "green", letter };
+  } else if (solution.includes(letter)) {
+    const solnCount = solution.split(letter).length - 1;
+    const yellowTilesSoFar = tiles.filter(
+      (t) => t.color === "yellow" && t.letter === letter
+    ).length;
+    const greenCount = [...currGuess].reduce(
+      (acc, curr, i) =>
+        curr === letter && solution.charAt(i) === curr ? acc + 1 : acc,
+      0
+    );
+    return {
+      color: yellowTilesSoFar < solnCount - greenCount ? "yellow" : "gray",
+      letter,
+    };
+  } else {
+    return { color: "gray", letter };
+  }
+}
+
+export function createTiles(solution: string, currGuess: string): Tile[] {
+  const tiles: Tile[] = [];
+  for (let i = 0; i < currGuess.length; i++) {
+    tiles[i] = createTile(solution, i, currGuess, tiles);
+  }
+  return tiles;
+}
+</script>
+
+<script setup lang="ts">
+import GuessRow from "@/components/GuessRow.vue";
+import { words } from "@/data/words";
+import { allowed } from "@/data/allowed";
+import { ref, onMounted } from "vue";
 
 let solution = words[Math.floor(Math.random() * words.length - 1)];
 let currentGuessWordIndex = 0;
@@ -20,55 +59,6 @@ const tiles = ref(
     Array<Tile>(5).fill({ color: "none", letter: "" })
   )
 );
-
-function mapFalseYellowToGray(
-  tile: Tile,
-  index: number,
-  currGuess: string,
-  tiles: Tile[]
-): Tile {
-  if (tile.color === "yellow") {
-    const letter = currGuess.charAt(index);
-    const solnCount = solution.split(letter).length - 1;
-    const greenCount = tiles.filter(
-      (t) => t.color === "green" && t.letter === letter
-    ).length;
-    const yellowCount = tiles.filter(
-      (t) => t.color === "yellow" && t.letter === letter
-    ).length;
-    return {
-      color: yellowCount > solnCount - greenCount ? "gray" : "yellow",
-      letter: tile.letter,
-    };
-  } else {
-    return tile;
-  }
-}
-
-function getColoredTile(letter: string, index: number): Tile {
-  let tile: Tile = { color: "gray", letter };
-  if (letter === solution.charAt(index)) {
-    tile.color = "green";
-  } else if (solution.includes(letter)) {
-    tile.color = "yellow";
-  }
-  return tile;
-}
-
-/**
- * Fixes false yellows in an array of colored tiles.
- * @description Mutate each tile in place so that the tiles array is updated for each step of the iteration.
- * A normal map function does not work because we need to track changes in the array as we iterate through.
- * @param tiles
- * @param currGuess
- * @returns the fixed tiles array
- */
-function getFixedTiles(tiles: Tile[], currGuess: string): Tile[] {
-  for (const [index, tile] of tiles.entries()) {
-    tiles[index] = mapFalseYellowToGray(tile, index, currGuess, tiles);
-  }
-  return tiles;
-}
 
 function handleKeyDown(event: KeyboardEvent) {
   if (solved.value || failed.value) {
@@ -89,10 +79,7 @@ function handleKeyDown(event: KeyboardEvent) {
       alert("Not a valid word");
       return;
     }
-    tiles.value[currentGuessWordIndex] = getFixedTiles(
-      [...currGuess].map((l, i) => getColoredTile(l, i)),
-      currGuess
-    );
+    tiles.value[currentGuessWordIndex] = createTiles(solution, currGuess);
     solved.value = currGuess === solution;
     if (!solved.value) {
       if (currentGuessWordIndex === 5) {
