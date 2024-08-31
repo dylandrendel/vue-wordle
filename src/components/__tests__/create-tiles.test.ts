@@ -1,5 +1,47 @@
 import { expect, test } from "vitest";
-import { createTiles, Tile } from "@/views/WordleView.vue";
+import { createTiles, type Tile } from "@/views/WordleView.vue";
+
+test("all green", () => {
+  const solution = "slice";
+  const currGuess = "slice";
+  const tiles: Tile[] = createTiles(solution, currGuess);
+  const expected: Tile[] = [
+    { letter: "s", color: "green" },
+    { letter: "l", color: "green" },
+    { letter: "i", color: "green" },
+    { letter: "c", color: "green" },
+    { letter: "e", color: "green" },
+  ];
+  expect(tiles).toStrictEqual(expected);
+});
+
+test("4 yellow 1 gray", () => {
+  const solution = "amuse";
+  const currGuess = "muses";
+  const tiles: Tile[] = createTiles(solution, currGuess);
+  const expected: Tile[] = [
+    { letter: "m", color: "yellow" },
+    { letter: "u", color: "yellow" },
+    { letter: "s", color: "yellow" },
+    { letter: "e", color: "yellow" },
+    { letter: "s", color: "gray" },
+  ];
+  expect(tiles).toStrictEqual(expected);
+});
+
+test("all gray", () => {
+  const solution = "lyric";
+  const currGuess = "tease";
+  const tiles: Tile[] = createTiles(solution, currGuess);
+  const expected: Tile[] = [
+    { letter: "t", color: "gray" },
+    { letter: "e", color: "gray" },
+    { letter: "a", color: "gray" },
+    { letter: "s", color: "gray" },
+    { letter: "e", color: "gray" },
+  ];
+  expect(tiles).toStrictEqual(expected);
+});
 
 test("l - 1 yellow, 2 gray", () => {
   const solution = "nasal";
