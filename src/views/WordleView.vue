@@ -37,7 +37,7 @@ export function createTile(
 export function createTiles(solution: string, currGuess: string): Tile[] {
   const tiles: Tile[] = [];
   for (let i = 0; i < currGuess.length; i++) {
-    tiles[i] = createTile(solution, i, currGuess, tiles);
+    tiles.push(createTile(solution, i, currGuess, tiles));
   }
   return tiles;
 }
