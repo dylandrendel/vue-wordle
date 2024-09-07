@@ -19,15 +19,16 @@ const isGray = computed(() => props.tile.color === "gray");
 
 <style scoped lang="scss">
 .tile {
-  margin: 2px;
+  margin: 3px;
   cursor: pointer;
   &:hover {
     background-color: #e0e0e0;
   }
   border: 1px solid rgba(0, 0, 0, 0.4);
   border-radius: 6px;
+  padding: 10px;
   height: 45px;
-  width: 30px;
+  width: 40px;
   display: flex;
   justify-content: center;
   align-items: center;

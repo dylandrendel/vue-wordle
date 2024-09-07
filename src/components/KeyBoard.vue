@@ -63,10 +63,11 @@ button {
   &:hover {
     background-color: #e0e0e0;
   }
+  padding: 10px;
   border: 1px solid rgba(0, 0, 0, 0.4);
   border-radius: 6px;
   cursor: pointer;
-  margin: 2px;
+  margin: 3px;
 }
 .row {
   display: flex;
