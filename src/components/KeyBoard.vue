@@ -61,8 +61,11 @@ watchEffect(() => {
 <style scoped lang="scss">
 button {
   &:hover {
-    background-color: #e0e0e0;
+    background-color: #8e8e8e;
   }
+  color: #ffffff;
+  font-weight: 700;
+  background-color: rgb(131, 131, 131);
   padding: 10px;
   border: 1px solid rgba(0, 0, 0, 0.4);
   border-radius: 6px;

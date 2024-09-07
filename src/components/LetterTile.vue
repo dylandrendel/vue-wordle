@@ -23,22 +23,25 @@ const isGray = computed(() => props.tile.color === "gray");
   border-radius: 6px;
   height: 45px;
   width: 42px;
+  color: #ffffff;
+
   display: flex;
   justify-content: center;
   align-items: center;
   font-weight: 600;
-  color: #000;
-  background-color: white;
+  font-size: 20px;
+  background-color: rgb(0, 0, 0);
+  border-color: gray;
   &.green {
     border-color: green;
-    background-color: rgb(198, 242, 198);
+    background-color: rgb(28 155 28);
   }
   &.yellow {
-    background-color: lightyellow;
+    background-color: rgb(217 169 37);
   }
   &.gray {
     border-color: gray;
-    background-color: lightgray;
+    background-color: rgb(73, 73, 73);
   }
 }
 </style>

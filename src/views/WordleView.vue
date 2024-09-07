@@ -6,6 +6,25 @@ export interface Tile {
   letter: string;
 }
 
+export function setKeyboardTilesColor(
+  tiles: Tile[],
+  letter: string,
+  color: Color
+): Tile[] {
+  return tiles.map((t) => {
+    if (t.letter.toLowerCase() === letter.toLowerCase()) {
+      if (t.color === "green") {
+        return t;
+      }
+      if (t.color === "yellow" && color === "gray") {
+        return t;
+      }
+      t.color = color;
+    }
+    return t;
+  });
+}
+
 export function createTile(
   solution: string,
   index: number,
@@ -32,12 +51,11 @@ export function createTile(
     tile.color = "gray";
   }
   if (keyboardTiles) {
-    keyboardTiles.value = keyboardTiles.value.map((t) => {
-      if (t.letter.toLowerCase() === letter.toLowerCase()) {
-        t.color = tile.color;
-      }
-      return t;
-    });
+    keyboardTiles.value = setKeyboardTilesColor(
+      keyboardTiles.value,
+      letter,
+      tile.color
+    );
   }
   return tile;
 }
@@ -190,20 +208,19 @@ onMounted(() => {
   justify-content: center;
 }
 .column {
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: 30px;
 }
 .container {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 3px;
+  margin-top: 60px;
   align-items: center;
   justify-content: center;
-  @media (max-width: 1024px) {
-    margin-top: 20px;
-  }
 }
 </style>

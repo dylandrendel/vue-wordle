@@ -22,29 +22,29 @@ const isGray = computed(() => props.tile.color === "gray");
   margin: 3px;
   cursor: pointer;
   &:hover {
-    background-color: #e0e0e0;
+    background-color: #8e8e8e;
   }
   border: 1px solid rgba(0, 0, 0, 0.4);
   border-radius: 6px;
   padding: 10px;
   height: 45px;
-  width: 40px;
+  min-width: 35px;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-weight: 600;
-  color: #000;
-  background-color: rgb(239, 239, 239);
+  font-weight: 700;
+  color: #ffffff;
+  background-color: rgb(142, 142, 142);
   &.green {
     border-color: green;
-    background-color: rgb(198, 242, 198);
+    background-color: rgb(28 155 28);
   }
   &.yellow {
-    background-color: lightyellow;
+    background-color: rgb(217 169 37);
   }
   &.gray {
-    border-color: gray;
-    background-color: lightgray;
+    border-color: rgb(81, 81, 81);
+    background-color: rgb(73, 73, 73);
   }
 }
 </style>
