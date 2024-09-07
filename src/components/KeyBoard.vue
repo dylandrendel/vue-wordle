@@ -27,7 +27,7 @@ watchEffect(() => {
         v-for="tile in topTiles"
         :key="tile.letter"
         :tile="tile"
-        @click="$emit('key-clicked', tile.letter)"
+        @click="$emit('key-clicked', tile.letter.toLowerCase())"
       />
     </div>
     <div class="row">
@@ -35,7 +35,7 @@ watchEffect(() => {
         v-for="tile in middleTiles"
         :key="tile.letter"
         :tile="tile"
-        @click="$emit('key-clicked', tile.letter)"
+        @click="$emit('key-clicked', tile.letter.toLowerCase())"
       />
     </div>
     <div class="row">
@@ -46,7 +46,7 @@ watchEffect(() => {
         v-for="tile in bottomTiles"
         :key="tile.letter"
         :tile="tile"
-        @click="$emit('key-clicked', tile.letter)"
+        @click="$emit('key-clicked', tile.letter.toLowerCase())"
       />
       <button
         class="backspace-button"
