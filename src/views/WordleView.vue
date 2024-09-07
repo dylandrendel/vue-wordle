@@ -61,7 +61,7 @@ import KeyBoard from "@/components/KeyBoard.vue";
 import { words } from "@/data/words";
 import { allowed } from "@/data/allowed";
 import { ref, onMounted } from "vue";
-import { type Ref } from "vue";
+import type { Ref } from "vue";
 
 let solution = words[Math.floor(Math.random() * words.length - 1)];
 let currentGuessWordIndex = 0;

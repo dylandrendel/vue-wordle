@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type Tile } from "@/views/WordleView.vue";
+import type { Tile } from "@/views/WordleView.vue";
 import { computed } from "vue";
 import { ref } from "vue";
 import { watchEffect } from "vue";
