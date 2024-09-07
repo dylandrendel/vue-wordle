@@ -23,6 +23,6 @@ const letters = computed(() => [...props.guess.toUpperCase()]);
 .guess-row {
   display: flex;
   flex-direction: row;
-  gap: 10px;
+  gap: 6px;
 }
 </style>

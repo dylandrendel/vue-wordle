@@ -10,11 +10,13 @@ export function createTile(
   solution: string,
   index: number,
   currGuess: string,
-  tiles: Tile[]
+  tiles: Tile[],
+  keyboardTiles: Ref<Tile[]>
 ): Tile {
   const letter = currGuess.charAt(index);
+  let tile: Tile = { color: "none", letter };
   if (letter === solution.charAt(index)) {
-    return { color: "green", letter };
+    tile.color = "green";
   } else if (solution.includes(letter)) {
     const solnCount = solution.split(letter).length - 1;
     const yellowTilesSoFar = tiles.filter(
@@ -25,19 +27,27 @@ export function createTile(
         curr === letter && solution.charAt(i) === curr ? acc + 1 : acc,
       0
     );
-    return {
-      color: yellowTilesSoFar < solnCount - greenCount ? "yellow" : "gray",
-      letter,
-    };
+    tile.color = yellowTilesSoFar < solnCount - greenCount ? "yellow" : "gray";
   } else {
-    return { color: "gray", letter };
+    tile.color = "gray";
   }
+  keyboardTiles.value = keyboardTiles.value.map((t) => {
+    if (t.letter.toLowerCase() === letter.toLowerCase()) {
+      t.color = tile.color;
+    }
+    return t;
+  });
+  return tile;
 }
 
-export function createTiles(solution: string, currGuess: string): Tile[] {
+export function createTiles(
+  solution: string,
+  currGuess: string,
+  keyboardTiles: Ref<Tile[]>
+): Tile[] {
   const tiles: Tile[] = [];
   for (let i = 0; i < currGuess.length; i++) {
-    tiles.push(createTile(solution, i, currGuess, tiles));
+    tiles.push(createTile(solution, i, currGuess, tiles, keyboardTiles));
   }
   return tiles;
 }
@@ -45,12 +55,44 @@ export function createTiles(solution: string, currGuess: string): Tile[] {
 
 <script setup lang="ts">
 import GuessRow from "@/components/GuessRow.vue";
+import KeyBoard from "@/components/KeyBoard.vue";
 import { words } from "@/data/words";
 import { allowed } from "@/data/allowed";
 import { ref, onMounted } from "vue";
+import { Ref } from "vue";
 
 let solution = words[Math.floor(Math.random() * words.length - 1)];
 let currentGuessWordIndex = 0;
+
+const initialKeys: Tile[] = [
+  { letter: "Q", color: "none" },
+  { letter: "W", color: "none" },
+  { letter: "E", color: "none" },
+  { letter: "R", color: "none" },
+  { letter: "T", color: "none" },
+  { letter: "Y", color: "none" },
+  { letter: "U", color: "none" },
+  { letter: "I", color: "none" },
+  { letter: "O", color: "none" },
+  { letter: "P", color: "none" },
+  { letter: "A", color: "none" },
+  { letter: "S", color: "none" },
+  { letter: "D", color: "none" },
+  { letter: "F", color: "none" },
+  { letter: "G", color: "none" },
+  { letter: "H", color: "none" },
+  { letter: "J", color: "none" },
+  { letter: "K", color: "none" },
+  { letter: "L", color: "none" },
+  { letter: "Z", color: "none" },
+  { letter: "X", color: "none" },
+  { letter: "C", color: "none" },
+  { letter: "V", color: "none" },
+  { letter: "B", color: "none" },
+  { letter: "N", color: "none" },
+  { letter: "M", color: "none" },
+];
+const keyboardTiles = ref(initialKeys);
 const guesses = ref(Array<string>(6).fill(""));
 const solved = ref(false);
 const failed = ref(false);
@@ -60,7 +102,7 @@ const tiles = ref(
   )
 );
 
-function handleKeyDown(event: KeyboardEvent) {
+function handleKeyDown(key: string) {
   if (solved.value || failed.value) {
     return;
   }
@@ -68,18 +110,22 @@ function handleKeyDown(event: KeyboardEvent) {
   let currGuess = guesses.value[currentGuessWordIndex];
   let newWord = "";
 
-  if (event.key === "Backspace" && currGuess.length > 0) {
+  if (key === "Backspace" && currGuess.length > 0) {
     newWord = currGuess.substring(0, currGuess.length - 1);
     guesses.value[currentGuessWordIndex] = newWord;
     return;
   }
 
-  if (event.key === "Enter" && currGuess.length === 5) {
-    if (!allowed.has(currGuess)) {
+  if (key === "Enter" && currGuess.length === 5) {
+    if (!allowed.has(currGuess.toLowerCase())) {
       alert("Not a valid word");
       return;
     }
-    tiles.value[currentGuessWordIndex] = createTiles(solution, currGuess);
+    tiles.value[currentGuessWordIndex] = createTiles(
+      solution,
+      currGuess,
+      keyboardTiles
+    );
     solved.value = currGuess === solution;
     if (!solved.value) {
       if (currentGuessWordIndex === 5) {
@@ -91,8 +137,8 @@ function handleKeyDown(event: KeyboardEvent) {
     return;
   }
 
-  if (/^[a-z]$/.test(event.key) && currGuess.length <= 4) {
-    newWord = currGuess + event.key;
+  if (/^[a-z]$/i.test(key) && currGuess.length <= 4) {
+    newWord = currGuess + key;
     guesses.value[currentGuessWordIndex] = newWord;
   }
 }
@@ -106,15 +152,19 @@ function reset() {
   tiles.value = Array.from({ length: 6 }, () =>
     Array<Tile>(5).fill({ color: "none", letter: "" })
   );
+  keyboardTiles.value = keyboardTiles.value.map((t) => ({
+    ...t,
+    color: "none",
+  }));
 }
 
 onMounted(() => {
-  window.addEventListener("keydown", (event) => handleKeyDown(event));
+  window.addEventListener("keydown", (event) => handleKeyDown(event.key));
 });
 </script>
 
 <template>
-  <div class="row">
+  <div class="column">
     <div class="container">
       <GuessRow
         v-for="(guess, i) in guesses"
@@ -127,6 +177,7 @@ onMounted(() => {
       <div v-if="failed">Better luck next time!</div>
       <button v-if="solved || failed" @click="reset">Reset</button>
     </div>
+    <KeyBoard :tiles="keyboardTiles" @key-clicked="handleKeyDown" />
   </div>
 </template>
 
@@ -136,10 +187,17 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
 }
+.column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+}
 .container {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px;
   align-items: center;
   justify-content: center;
   @media (max-width: 1024px) {
