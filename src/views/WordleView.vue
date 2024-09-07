@@ -11,7 +11,7 @@ export function createTile(
   index: number,
   currGuess: string,
   tiles: Tile[],
-  keyboardTiles: Ref<Tile[]>
+  keyboardTiles: Ref<Tile[]> | undefined
 ): Tile {
   const letter = currGuess.charAt(index);
   let tile: Tile = { color: "none", letter };
@@ -31,19 +31,21 @@ export function createTile(
   } else {
     tile.color = "gray";
   }
-  keyboardTiles.value = keyboardTiles.value.map((t) => {
-    if (t.letter.toLowerCase() === letter.toLowerCase()) {
-      t.color = tile.color;
-    }
-    return t;
-  });
+  if (keyboardTiles) {
+    keyboardTiles.value = keyboardTiles.value.map((t) => {
+      if (t.letter.toLowerCase() === letter.toLowerCase()) {
+        t.color = tile.color;
+      }
+      return t;
+    });
+  }
   return tile;
 }
 
 export function createTiles(
   solution: string,
   currGuess: string,
-  keyboardTiles: Ref<Tile[]>
+  keyboardTiles?: Ref<Tile[]>
 ): Tile[] {
   const tiles: Tile[] = [];
   for (let i = 0; i < currGuess.length; i++) {
@@ -59,7 +61,7 @@ import KeyBoard from "@/components/KeyBoard.vue";
 import { words } from "@/data/words";
 import { allowed } from "@/data/allowed";
 import { ref, onMounted } from "vue";
-import { Ref } from "vue";
+import { type Ref } from "vue";
 
 let solution = words[Math.floor(Math.random() * words.length - 1)];
 let currentGuessWordIndex = 0;
