@@ -21,8 +21,8 @@ const isGray = computed(() => props.tile.color === "gray");
 .tile {
   border: 1px solid rgba(0, 0, 0, 0.4);
   border-radius: 6px;
-  height: 45px;
-  width: 42px;
+  height: 50px;
+  width: 45px;
   color: #ffffff;
 
   display: flex;
