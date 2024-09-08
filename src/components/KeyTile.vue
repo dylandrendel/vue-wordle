@@ -19,20 +19,22 @@ const isGray = computed(() => props.tile.color === "gray");
 
 <style scoped lang="scss">
 .tile {
-  margin: 3px;
+  margin: 2px;
   cursor: pointer;
   &:hover {
     background-color: #8e8e8e;
   }
+  -webkit-tap-highlight-color: transparent;
   border: 1px solid rgba(0, 0, 0, 0.4);
   border-radius: 6px;
   padding: 10px;
-  height: 45px;
-  min-width: 35px;
+  height: 50px;
+  min-width: 36px;
   display: flex;
   justify-content: center;
   align-items: center;
   font-weight: 700;
+  font-size: 16px;
   color: #ffffff;
   background-color: rgb(142, 142, 142);
   &.green {
