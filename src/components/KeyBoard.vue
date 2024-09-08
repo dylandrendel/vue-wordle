@@ -68,7 +68,7 @@ button {
   &:hover {
     background-color: #8e8e8e;
   }
-  -webkit-tap-highlight-color: #8e8e8e;
+  -webkit-tap-highlight-color: transparent;
   font-size: 11px;
   color: #ffffff;
   font-weight: 700;
