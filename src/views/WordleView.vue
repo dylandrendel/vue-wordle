@@ -192,16 +192,45 @@ onMounted(() => {
         :tiles="tiles[i]"
         :key="i"
       ></GuessRow>
-      <div v-if="solved">Nice wordling!</div>
-      <div v-if="failed">The solution was {{ solution }}</div>
-      <div v-if="failed">Better luck next time!</div>
-      <button v-if="solved || failed" @click="reset">Reset</button>
+      <div v-if="solved || failed" class="done">
+        <div v-if="solved">Nice wordling! 🎉</div>
+        <div v-if="failed">The solution was {{ solution }}</div>
+        <div v-if="failed">Better luck next time!</div>
+        <button class="button" v-if="solved || failed" @click="reset">
+          Reset
+        </button>
+      </div>
     </div>
-    <KeyBoard :tiles="keyboardTiles" @key-clicked="handleKeyDown" />
+    <KeyBoard
+      v-if="!solved && !failed"
+      :tiles="keyboardTiles"
+      @key-clicked="handleKeyDown"
+    />
   </div>
 </template>
 
 <style scoped lang="scss">
+.done {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+}
+.button {
+  background-color: #4caf50;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 8px;
+}
 .row {
   display: flex;
   align-items: center;
@@ -219,6 +248,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 3px;
+  color: white;
   margin-top: 60px;
   align-items: center;
   justify-content: center;

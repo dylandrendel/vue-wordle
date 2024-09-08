@@ -24,7 +24,7 @@ const isGray = computed(() => props.tile.color === "gray");
   &:hover {
     background-color: #8e8e8e;
   }
-  -webkit-tap-highlight-color: transparent;
+  -webkit-tap-highlight-color: #8e8e8e;
   border: 1px solid rgba(0, 0, 0, 0.4);
   border-radius: 6px;
   padding: 10px;

@@ -68,12 +68,12 @@ button {
   &:hover {
     background-color: #8e8e8e;
   }
-  -webkit-tap-highlight-color: transparent;
-  font-size: 16px;
+  -webkit-tap-highlight-color: #8e8e8e;
+  font-size: 11px;
   color: #ffffff;
   font-weight: 700;
   background-color: rgb(131, 131, 131);
-  padding: 10px;
+  padding: 14px;
   border: 1px solid rgba(0, 0, 0, 0.4);
   border-radius: 6px;
   cursor: pointer;
